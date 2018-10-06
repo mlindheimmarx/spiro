@@ -2,8 +2,8 @@ from PIL import Image, ImageDraw
 import pdb
 import math
 
-speed1 = 1
-speed2 = math.pi
+speed1 = 101
+speed2 = 100
 speed3 = - 1 / 3
 length1 = 23.0
 length2 = 23.0
@@ -14,7 +14,7 @@ initial_theta2 = 0
 
 def lcm(a, b):
     c = 1
-    while abs(c * a / b - int (c * a / b)) < 0.001:
+    while c * a / b == int (c * a / b):
         c += 1
     return c * a
 
