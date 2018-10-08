@@ -4,7 +4,7 @@ import math
 
 speed1 = 101
 speed2 = 100
-speed3 = - 1 / 3
+speed3 = - 1 / 5
 length1 = 23.0
 length2 = 23.0
 radius1 = 3
@@ -13,8 +13,9 @@ initial_theta1 = 0
 initial_theta2 = 0
 
 def lcm(a, b):
+    a, b = abs(a), abs(b)
     c = 1
-    while c * a / b == int (c * a / b):
+    while c * a / b != int (c * a / b):
         c += 1
     return c * a
 
@@ -48,7 +49,6 @@ im = Image.new('RGB', (res, res), color = 'white')
 pixels = im.load()
 rotations = int(lcm(lcm(abs(speed1), abs(speed2)), abs(speed3)))
 num_pixels = divisor * rotations
-print(rotations)
 draw = ImageDraw.Draw(im)
 last_coord = (0, 0)
 for n in range(0, num_pixels):
@@ -68,9 +68,7 @@ for n in range(0, num_pixels):
     try:
         if n > 1:
             draw.line((x, y, last_coord[0], last_coord[1]), fill=(0, 0, 0, 255))
-
-
         last_coord = (x, y)
     except:
         pass
-im.transpose(Image.FLIP_TOP_BOTTOM).save('test.png')
+im.transpose(Image.FLIP_TOP_BOTTOM).save('pattern.png')
