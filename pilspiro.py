@@ -2,12 +2,12 @@ from PIL import Image, ImageDraw
 import pdb
 import math
 
-speed1 = 101
-speed2 = 100
-speed3 = - 1 / 5
+speed1 = 3
+speed2 = 4
+speed3 = -5
 length1 = 23.0
 length2 = 23.0
-radius1 = 3
+radius1 = 2
 radius2 = 3
 initial_theta1 = 0
 initial_theta2 = 0
@@ -39,16 +39,16 @@ class Wheel():
 wheel1 = Wheel([-13.5, -13.5], length1, radius1, initial_theta1, speed1)
 wheel2 = Wheel([13.5, -13.5], length2, radius2, initial_theta2, speed2)
 
-divisor = 360
-
 head_loc = [0.0, 0.0]
 base_distance = ((wheel1.loc[0] - wheel2.loc[0]) ** 2 + (wheel1.loc[1] - wheel2.loc[1]) ** 2) ** (1 / 2)
 
 res = 2160
+divisor = 10
 im = Image.new('RGB', (res, res), color = 'white')
 pixels = im.load()
 rotations = int(lcm(lcm(abs(speed1), abs(speed2)), abs(speed3)))
-num_pixels = divisor * rotations
+print(rotations)
+num_pixels = rotations * divisor
 draw = ImageDraw.Draw(im)
 last_coord = (0, 0)
 for n in range(0, num_pixels):
