@@ -1,16 +1,21 @@
 from PIL import Image, ImageDraw
 import pdb
+import aggdraw
 import math
 
-speed1 = 3
-speed2 = 4
-speed3 = -5
-length1 = 23.0
-length2 = 23.0
-radius1 = 2
-radius2 = 3
-initial_theta1 = 0
-initial_theta2 = 0
+speed1 = 35 / 5
+speed2 = 30 / 5
+speed3 = -10 / 50
+length1 = 19.5
+length2 = 19.5
+radius1 = 3.5
+radius2 = 3.5
+initial_theta1 = math.pi
+initial_theta2 = math.pi
+
+#speed1 = speed1 / 5
+#speed2 = speed2 / 5
+#speed3 = speed3 / 49
 
 def lcm(a, b):
     a, b = abs(a), abs(b)
@@ -42,21 +47,33 @@ wheel2 = Wheel([13.5, -13.5], length2, radius2, initial_theta2, speed2)
 head_loc = [0.0, 0.0]
 base_distance = ((wheel1.loc[0] - wheel2.loc[0]) ** 2 + (wheel1.loc[1] - wheel2.loc[1]) ** 2) ** (1 / 2)
 
-res = 2160
-divisor = 10
-im = Image.new('RGB', (res, res), color = 'white')
+res = 3840
+divisor = 100
+im = Image.new('RGB', (res, res), color = (255, 255, 255))
 pixels = im.load()
-rotations = int(lcm(lcm(abs(speed1), abs(speed2)), abs(speed3)))
-print(rotations)
-num_pixels = rotations * divisor
+rotations = int(lcm(abs(speed1), abs(speed2))) #, abs(speed3)))
+num_pixels = 10000
 draw = ImageDraw.Draw(im)
 last_coord = (0, 0)
-for n in range(0, num_pixels):
+
+def rotate(x, y, theta):
+    old_x = x - res / 2
+    old_y = y - res / 2
+    x = old_x * math.cos(theta) - old_y * math.sin(theta) + res / 2
+    y = old_x * math.sin(theta) + old_y * math.cos(theta) + res / 2
+    return [x, y]
+
+points = []
+
+print(abs((speed1 - speed2) / speed3))
+
+for n in range(0, int(num_pixels) + 2):
     old_x = head_loc[0]
     old_y = head_loc[1]
-    theta = (n / num_pixels) * 2 * math.pi
-    wheel1.theta = theta * speed1 / speed3
-    wheel2.theta = theta * speed2 / speed3
+    theta = (n / num_pixels) * 2 * math.pi * rotations
+    wheel1.theta = theta / speed2
+    wheel2.theta = theta / speed1
+    theta = theta / speed1 / speed2 * speed3
     wheel1.recalculate_loc()
     wheel2.recalculate_loc()
     base_distance = ((wheel1.loc[0] - wheel2.loc[0]) ** 2 + (wheel1.loc[1] - wheel2.loc[1]) ** 2) ** (1 / 2)
@@ -67,8 +84,14 @@ for n in range(0, num_pixels):
     y = old_x * math.sin(theta) + old_y * math.cos(theta) + (res / 2)
     try:
         if n > 1:
-            draw.line((x, y, last_coord[0], last_coord[1]), fill=(0, 0, 0, 255))
+            points = points + [x, y]
+            for k in range(0, abs(int((speed1 - speed2) / speed3))):
+                r_xy = rotate(x, y, k * 2 * rotations * math.pi * speed3 / speed2 / speed1)
+                r_last_coord = rotate(last_coord[0], last_coord[1], k * 2 * rotations * math.pi * speed3 / speed2 / speed1)
+                draw.line((r_xy[0], r_xy[1], r_last_coord[0], r_last_coord[1]), fill=(0, 0, 0, 255))
         last_coord = (x, y)
     except:
         pass
+
 im.transpose(Image.FLIP_TOP_BOTTOM).save('pattern.png')
+im.show()
